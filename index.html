@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoQuest AI - Track, analyze, and gamify your carbon footprint with personalized AI coaching, daily missions, and interactive carbon twin simulations.">
+  <title>EcoQuest AI - Gamified Sustainability & Carbon Tracking Platform</title>
+  
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js and Canvas Confetti CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="dark-theme">
+
+  <!-- Background Ambient Glow Blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- App Main Wrapper -->
+  <div class="app-wrapper">
+    
+    <!-- Sidebar Navigation (Desktop) -->
+    <aside id="sidebar-nav">
+      <div class="logo">
+        <div class="logo-icon">Q</div>
+        <div class="logo-text">EcoQuest AI</div>
+      </div>
+      
+      <nav aria-label="Main Navigation">
+        <a class="nav-link active" data-target="landing-page" id="nav-btn-landing">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span class="nav-link-text">Home</span>
+        </a>
+        <a class="nav-link" data-target="dashboard-page" id="nav-btn-dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          <span class="nav-link-text">Dashboard</span>
+        </a>
+        <a class="nav-link" data-target="calculator-page" id="nav-btn-calculator">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+          <span class="nav-link-text">Calculator</span>
+        </a>
+        <a class="nav-link" data-target="coach-page" id="nav-btn-coach">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="nav-link-text">AI Coach</span>
+        </a>
+        <a class="nav-link" data-target="twin-page" id="nav-btn-twin">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="nav-link-text">Carbon Twin</span>
+        </a>
+        <a class="nav-link" data-target="hub-page" id="nav-btn-hub">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="nav-link-text">Climate Hub</span>
+        </a>
+        <a class="nav-link" data-target="leaderboard-page" id="nav-btn-leaderboard">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="nav-link-text">Leaderboard</span>
+        </a>
+        <a class="nav-link" data-target="report-page" id="nav-btn-report">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="nav-link-text">Weekly Report</span>
+        </a>
+      </nav>
+      
+      <!-- User Widget Sidebar -->
+      <div class="user-widget-sidebar" id="sidebar-user-card" style="display: none;">
+        <div class="user-info-mini">
+          <div class="user-avatar-mini" id="sidebar-user-avatar">🛡️</div>
+          <div>
+            <div class="user-name-mini" id="sidebar-user-name">User (You)</div>
+            <div class="user-level-mini" id="sidebar-user-level">Eco Level 1</div>
+          </div>
+        </div>
+        <div class="xp-progress-container-mini">
+          <div class="xp-label-mini">
+            <span>Progress to Next Lvl</span>
+            <span id="sidebar-user-xp-ratio">0/100 XP</span>
+          </div>
+          <div class="xp-bar-outer-mini">
+            <div class="xp-bar-inner-mini" id="sidebar-user-xp-bar"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Container -->
+    <main>
+      
+      <!-- Top Sticky Header -->
+      <header>
+        <div class="header-title-section">
+          <h1 id="page-title-heading">EcoQuest AI</h1>
+        </div>
+        <div class="header-actions">
+          
+          <!-- Quick User Stats -->
+          <div class="header-quick-stats" id="header-quick-stats-widget" style="display: none;">
+            <div class="quick-stat-item streak" title="Streak Days">
+              🔥 <span id="header-streak-val">0</span>d
+            </div>
+            <div class="quick-stat-item xp" title="Total Experience Points">
+              ⚡ <span id="header-xp-val">0</span> XP
+            </div>
+          </div>
+          
+          <!-- Dark/Light Mode Toggler -->
+          <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Light/Dark Theme">
+            <!-- Moon Icon -->
+            <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <!-- Sun Icon -->
+            <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+          
+          <!-- Login/Profile Button -->
+          <button class="btn btn-secondary btn-sm" id="auth-header-btn">Get Started</button>
+        </div>
+      </header>
+
+      <!-- Content Container slots -->
+      <div class="content-container">
+
+        <!-- =================================================
+             PAGE 1: LANDING PAGE
+             ================================================= -->
+        <section id="landing-page" class="tab-content active">
+          
+          <!-- Hero Panel -->
+          <div class="landing-hero">
+            <div class="hero-content">
+              <div class="hero-badge">🌱 Join the Eco-Revolution</div>
+              <h1>Turn Your Daily Habits<br>Into Climate Action</h1>
+              <p>Track your carbon footprint, challenge yourself with eco-missions, interact with your virtual carbon twin, and consult your personal AI Coach to build a greener, healthier future.</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" id="hero-get-started-btn">Calculate Footprint</button>
+                <button class="btn btn-secondary" id="hero-features-btn">Explore Features</button>
+              </div>
+            </div>
+            <div class="hero-visual">
+              <svg class="hero-svg-container" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Circular background lines -->
+                <circle cx="250" cy="250" r="220" stroke="#10b981" stroke-opacity="0.1" stroke-dasharray="10 10" stroke-width="2"/>
+                <circle cx="250" cy="250" r="180" stroke="#14b8a6" stroke-opacity="0.15" stroke-width="1.5"/>
+                <!-- Green Globe Core -->
+                <circle cx="250" cy="250" r="110" fill="url(#globe-gradient-fill)"/>
+                <!-- Globe continents stylized details -->
+                <path d="M210 170c20 0 25 15 45 10s25-25 45-15 15 35 5 45-35 5-45 25-25 15-45-5-25-45-5-60z" fill="#047857" opacity="0.4" />
+                <path d="M260 270c15 15 45 5 40 30s-20 30-40 20-30-20-40-5 5-40 40-45z" fill="#047857" opacity="0.4" />
+                <!-- Stylized Windmills -->
+                <g transform="translate(170, 110)">
+                  <line x1="20" y1="50" x2="20" y2="90" stroke="#f0fdf4" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M20 50l-15-20h30z" fill="#10b981" transform="rotate(30 20 50)"/>
+                  <circle cx="20" cy="50" r="3" fill="#fff"/>
+                </g>
+                <g transform="translate(310, 120)">
+                  <line x1="15" y1="40" x2="15" y2="70" stroke="#f0fdf4" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M15 40l-10-15h20z" fill="#14b8a6" transform="rotate(80 15 40)"/>
+                  <circle cx="15" cy="40" r="2" fill="#fff"/>
+                </g>
+                <!-- Trees floating -->
+                <g transform="translate(130, 240)">
+                  <rect x="11" y="24" width="4" height="12" fill="#78350f" rx="1"/>
+                  <circle cx="13" cy="18" r="10" fill="#22c55e"/>
+                  <circle cx="9" cy="14" r="8" fill="#15803d"/>
+                </g>
+                <g transform="translate(340, 210)">
+                  <rect x="9" y="18" width="3" height="10" fill="#78350f" rx="1"/>
+                  <polygon points="10.5,2 18,18 3,18" fill="#10b981"/>
+                  <polygon points="10.5,8 16,20 5,20" fill="#15803d"/>
+                </g>
+                <!-- Glowing Sun Ambient Element -->
+                <circle cx="370" cy="90" r="32" fill="url(#sun-gradient)"/>
+                
+                <!-- Definition Gradients -->
+                <defs>
+                  <radialGradient id="globe-gradient-fill" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(250 250) rotate(90) scale(110)">
+                    <stop offset="0%" stop-color="#34d399"/>
+                    <stop offset="60%" stop-color="#059669"/>
+                    <stop offset="100%" stop-color="#064e3b"/>
+                  </radialGradient>
+                  <radialGradient id="sun-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(370 90) rotate(90) scale(32)">
+                    <stop offset="0%" stop-color="#fbbf24"/>
+                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Features Grid Section -->
+          <div class="features-section" id="eco-features-anchor">
+            <h2>Modern Ecosystem Tools Built For Impact</h2>
+            <p class="section-desc" style="margin: 0 auto;">EcoQuest AI moves beyond plain score tracking to give you a dynamic dashboard system with full gamification mechanics.</p>
+            <div class="features-grid">
+              
+              <!-- Feature Card 1 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <h3>Precise Carbon Score</h3>
+                <p>Provide information about your transport, home energy draw, diet, and shopping habits to calculate a standard annual projection broken down by category.</p>
+              </div>
+
+              <!-- Feature Card 2 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3>AI Carbon Coach</h3>
+                <p>Get direct, friendly, and practical feedback based on your choices. Chat with the coach to clear up doubts about phantom loads or offsets.</p>
+              </div>
+
+              <!-- Feature Card 3 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h3>Eco Missions</h3>
+                <p>Complete bite-sized daily climate actions. Check off standby power limits, use public transport, or go meatless to earn XP, level up, and earn badges.</p>
+              </div>
+
+              <!-- Feature Card 4 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+                <h3>Carbon Twin Simulator</h3>
+                <p>Use simple interactive sliders to simulate your ideal carbon twin. Instantly see how minor shifts in AC or commuting reduce yearly emissions and bills.</p>
+              </div>
+
+              <!-- Feature Card 5 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                </div>
+                <h3>Weekly Climate Reports</h3>
+                <p>Generate a professional-grade PDF summary of your achievements, improvements, and custom energy checklists to map your sustainability goals.</p>
+              </div>
+
+              <!-- Feature Card 6 -->
+              <div class="feature-card">
+                <div class="feature-icon-container">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <h3>Community Leaderboard</h3>
+                <p>Engage with friends, families, and ecological enthusiasts. Climb rank tiers as you complete active challenges and check off daily habits.</p>
+              </div>
+
+            </div>
+          </div>
+          
+          <!-- Statistics Showcase -->
+          <div class="stats-section">
+            <div class="stat-show-card">
+              <div class="stat-number">12.5k</div>
+              <div class="stat-label">Eco-Warriors Registered</div>
+            </div>
+            <div class="stat-show-card">
+              <div class="stat-number">48.2t</div>
+              <div class="stat-label">CO2 Emissions Avoided</div>
+            </div>
+            <div class="stat-show-card">
+              <div class="stat-number">150k</div>
+              <div class="stat-label">Missions Completed</div>
+            </div>
+            <div class="stat-show-card">
+              <div class="stat-number">3,200</div>
+              <div class="stat-label">Trees Saved Equivalent</div>
+            </div>
+          </div>
+
+          <!-- Testimonials Section -->
+          <div class="testimonials-section">
+            <h2>Loved by Climate Advocates</h2>
+            <div class="testimonials-grid">
+              
+              <div class="testimonial-card">
+                <p class="testimonial-quote">"EcoQuest completely changed how I think about my daily commute. The Carbon Twin simulation convinced me to start cycling twice a week. Highly recommended!"</p>
+                <div class="testimonial-user">
+                  <div class="testimonial-avatar">🦊</div>
+                  <div>
+                    <div class="testimonial-name">Sarah Jenkins</div>
+                    <div class="testimonial-title">Student & Cyclist</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <p class="testimonial-quote">"The gamified badges and leaderboard make emissions tracking fun. I find myself unplugging chargers just to secure the daily Standby Slayer XP!"</p>
+                <div class="testimonial-user">
+                  <div class="testimonial-avatar">🪐</div>
+                  <div>
+                    <div class="testimonial-name">David Vance</div>
+                    <div class="testimonial-title">Software Engineer</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <p class="testimonial-quote">"As a mother, this is a fantastic tool to teach children about home energy efficiency. The weekly report layout is clear, practical, and highly encouraging."</p>
+                <div class="testimonial-user">
+                  <div class="testimonial-avatar">☀️</div>
+                  <div>
+                    <div class="testimonial-name">Elena Rostova</div>
+                    <div class="testimonial-title">Environmental Educator</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Call To Action -->
+          <div class="cta-panel">
+            <h2>Ready to Take Action Today?</h2>
+            <p>Calculate your initial carbon score in less than 3 minutes, set goals, and see how simple changes lead to massive savings for both your wallet and the planet.</p>
+            <button class="btn btn-primary" id="cta-calculate-btn">Get Started Now</button>
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 2: USER DASHBOARD
+             ================================================= -->
+        <section id="dashboard-page" class="tab-content">
+          
+          <div class="dashboard-grid">
+            
+            <!-- Left main column widgets -->
+            <div class="dash-main-column">
+              
+              <!-- Carbon score circular gauge panel -->
+              <div class="glass-panel" style="margin-bottom: 0;">
+                <div class="score-widget-panel">
+                  <div class="gauge-holder">
+                    <svg class="gauge-svg" viewBox="0 0 160 160">
+                      <circle cx="80" cy="80" r="70" class="gauge-bg"/>
+                      <circle cx="80" cy="80" r="70" class="gauge-fill" id="dashboard-gauge-fill"/>
+                      <defs>
+                        <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#14b8a6"/>
+                          <stop offset="100%" stop-color="#10b981"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div class="gauge-text">
+                      <span class="gauge-score-value" id="dashboard-score-val">--</span>
+                      <span class="gauge-score-label">Score</span>
+                    </div>
+                  </div>
+                  <div class="score-details">
+                    <div class="score-grade-badge" id="dashboard-grade-badge">Grade --</div>
+                    <h2 id="dashboard-score-title">Uncalculated Footprint</h2>
+                    <p id="dashboard-score-feedback">Welcome to EcoQuest AI! Please complete the Carbon Score Calculator form in the next tab to generate your ecological index and obtain custom coach recommendations.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dashboard counters (trees saved, carbon saved) -->
+              <div class="dashboard-overview-cards">
+                
+                <div class="overview-card">
+                  <div class="overview-icon-container co2">☁️</div>
+                  <div class="overview-details">
+                    <h3>Emissions Avoided</h3>
+                    <div class="overview-value" id="dashboard-co2-saved-val">0.0 kg</div>
+                  </div>
+                </div>
+
+                <div class="overview-card">
+                  <div class="overview-icon-container trees">🌳</div>
+                  <div class="overview-details">
+                    <h3>Trees Saved Equivalent</h3>
+                    <div class="overview-value" id="dashboard-trees-saved-val">0.0</div>
+                  </div>
+                </div>
+
+                <div class="overview-card">
+                  <div class="overview-icon-container rank">👑</div>
+                  <div class="overview-details">
+                    <h3>Sustainability Rank</h3>
+                    <div class="overview-value" id="dashboard-rank-val">Tier --</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Carbon breakdown trend graphic chart -->
+              <div class="glass-panel chart-card">
+                <div class="section-header" style="margin-bottom: 12px;">
+                  <h3 class="section-title">📊 Category Breakdown & Target</h3>
+                </div>
+                <p class="section-desc" style="margin-bottom: 24px;">Visualize how transport, home energy, food choices, and shopping habits build up your emissions footprint.</p>
+                <div class="chart-wrapper">
+                  <canvas id="dashboard-breakdown-chart"></canvas>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right side columns (Daily mission widget) -->
+            <div class="dash-sidebar-column">
+              
+              <!-- Daily Mission Widget -->
+              <div class="glass-panel" style="padding: 24px;">
+                <div class="section-header" style="margin-bottom: 8px;">
+                  <h3 class="section-title">🎯 Daily Missions</h3>
+                </div>
+                <p class="section-desc" style="margin-bottom: 16px;">Check off daily activities to immediately claim XP and reduce your virtual carbon output.</p>
+                
+                <div class="checklist-container" id="dashboard-missions-list">
+                  <!-- Generated via JS -->
+                </div>
+              </div>
+
+              <!-- Active Challenge Widget -->
+              <div class="glass-panel" style="padding: 24px;">
+                <div class="section-header" style="margin-bottom: 8px;">
+                  <h3 class="section-title">⚡ Active Challenges</h3>
+                </div>
+                <p class="section-desc" style="margin-bottom: 16px;">Commit to multi-day challenges in the Climate Hub to secure major rewards.</p>
+                <div id="dashboard-active-challenges" style="display: flex; flex-direction: column; gap: 12px;">
+                  <!-- Dynamically populated or default empty card -->
+                  <div style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 20px;">
+                    No challenges active. <br>
+                    <button class="btn btn-secondary btn-sm" style="margin-top: 10px;" id="dashboard-go-challenges-btn">Browse Challenges</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Streak progression card -->
+              <div class="glass-panel" style="padding: 24px; text-align: center; background: linear-gradient(135deg, rgba(255, 140, 0, 0.08) 0%, rgba(255, 140, 0, 0.02) 100%); border-color: rgba(255, 140, 0, 0.2);">
+                <div style="font-size: 40px; margin-bottom: 8px;">🔥</div>
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Daily Eco-Streak</h3>
+                <div style="font-size: 28px; font-weight: 800; color: #ff8c00; font-family: var(--font-heading);" id="dashboard-streak-count-large">0 Days</div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5;">Complete at least one mission daily or answer a Climate Quiz to preserve your streak multiplier!</p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 3: CARBON SCORE CALCULATOR FORM
+             ================================================= -->
+        <section id="calculator-page" class="tab-content">
+          
+          <div class="glass-panel calculator-wizard" id="calculator-card-wizard">
+            
+            <!-- Step headers indicators -->
+            <div class="wizard-steps-header" role="tablist">
+              <div class="wizard-step-indicator active" id="wizard-indicator-1">
+                <div class="step-indicator-circle">1</div>
+                <span class="step-indicator-label">Transport</span>
+              </div>
+              <div class="wizard-step-indicator" id="wizard-indicator-2">
+                <div class="step-indicator-circle">2</div>
+                <span class="step-indicator-label">Energy</span>
+              </div>
+              <div class="wizard-step-indicator" id="wizard-indicator-3">
+                <div class="step-indicator-circle">3</div>
+                <span class="step-indicator-label">Diet</span>
+              </div>
+              <div class="wizard-step-indicator" id="wizard-indicator-4">
+                <div class="step-indicator-circle">4</div>
+                <span class="step-indicator-label">Shopping</span>
+              </div>
+            </div>
+
+            <!-- STEP 1: TRANSPORTATION -->
+            <div class="form-step active" id="form-step-1">
+              <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 24px; margin-bottom: 6px;">🚗 Step 1: Commuting & Transport</h2>
+                <p class="section-desc">Estimate the distance you travel on average per week using different transport modes.</p>
+              </div>
+              
+              <div class="question-grid">
+                <div class="form-group">
+                  <label for="input-car-usage">Car Usage (km/week)</label>
+                  <input type="number" id="input-car-usage" min="0" value="100" placeholder="e.g. 150">
+                </div>
+                
+                <div class="form-group">
+                  <label>Vehicle Fuel Type</label>
+                  <div class="visual-select-grid" id="car-type-selector">
+                    <div class="visual-select-card selected" data-value="petrol">
+                      <div class="visual-select-icon">⛽</div>
+                      <div class="visual-select-label">Petrol</div>
+                    </div>
+                    <div class="visual-select-card" data-value="diesel">
+                      <div class="visual-select-icon">🛢️</div>
+                      <div class="visual-select-label">Diesel</div>
+                    </div>
+                    <div class="visual-select-card" data-value="hybrid">
+                      <div class="visual-select-icon">🔌</div>
+                      <div class="visual-select-label">Hybrid</div>
+                    </div>
+                    <div class="visual-select-card" data-value="electric">
+                      <div class="visual-select-icon">⚡</div>
+                      <div class="visual-select-label">Electric</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-transit-usage">Public Transport (Bus/Train) (km/week)</label>
+                  <input type="number" id="input-transit-usage" min="0" value="50" placeholder="e.g. 80">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-active-transit">Active Commute (Biking/Walking) (km/week)</label>
+                  <input type="number" id="input-active-transit" min="0" value="10" placeholder="e.g. 15">
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2: HOME ENERGY -->
+            <div class="form-step" id="form-step-2">
+              <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 24px; margin-bottom: 6px;">💡 Step 2: Home Energy Draw</h2>
+                <p class="section-desc">Estimate your household energy draw and cooling configurations.</p>
+              </div>
+
+              <div class="question-grid">
+                <div class="form-group">
+                  <label for="input-electricity">Monthly Electricity Draw (kWh)</label>
+                  <input type="number" id="input-electricity" min="0" value="250" placeholder="e.g. 300">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-ac-usage">Air Conditioner Usage (Hours/Day)</label>
+                  <input type="number" id="input-ac-usage" min="0" max="24" value="4" placeholder="e.g. 6">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-efficiency">Home Appliance Efficiency Rating</label>
+                  <select id="input-efficiency">
+                    <option value="high">High Efficiency (Energy Star / LED bulbs)</option>
+                    <option value="medium" selected>Standard / Balanced</option>
+                    <option value="low">Low Efficiency (Incandescent bulbs / Old AC units)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: FOOD -->
+            <div class="form-step" id="form-step-3">
+              <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 24px; margin-bottom: 6px;">🥗 Step 3: Diet & Meals</h2>
+                <p class="section-desc">Meat production contributes heavily to global carbon. Balance your weekly meals.</p>
+              </div>
+
+              <div class="question-grid">
+                <div class="form-group">
+                  <label for="input-veg-meals">Vegetarian / Plant-Based Meals (per week)</label>
+                  <input type="number" id="input-veg-meals" min="0" max="21" value="14">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-nonveg-meals">Non-Vegetarian (Beef/Pork/Chicken) Meals (per week)</label>
+                  <input type="number" id="input-nonveg-meals" min="0" max="21" value="7">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-packaged">Pre-packaged & Fast Food Consumption</label>
+                  <select id="input-packaged">
+                    <option value="low">Minimal (Cook from fresh ingredients / local market)</option>
+                    <option value="medium" selected>Moderate (Standard grocery packaging)</option>
+                    <option value="high">Heavy (Frozen meals, heavy plastics, fast food boxes)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 4: SHOPPING -->
+            <div class="form-step" id="form-step-4">
+              <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 24px; margin-bottom: 6px;">🛍️ Step 4: Shopping Habits</h2>
+                <p class="section-desc">Industrial manufacturing accounts for significant logistics emissions.</p>
+              </div>
+
+              <div class="question-grid">
+                <div class="form-group">
+                  <label for="input-purchases">New Products Purchased (Items/Month)</label>
+                  <input type="number" id="input-purchases" min="0" value="3" placeholder="e.g. 5">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-fashion">Fast Fashion Shopping Frequency</label>
+                  <select id="input-fashion">
+                    <option value="never">Never (Buy second-hand or premium durable garments)</option>
+                    <option value="sometimes" selected>Sometimes (Occasionally purchase low-cost items)</option>
+                    <option value="frequently">Frequently (Keep up with seasonal fashion trends)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Wizard footer navigational buttons -->
+            <div class="wizard-footer">
+              <button class="btn btn-secondary" id="wizard-prev-btn" style="visibility: hidden;">Back</button>
+              <button class="btn btn-primary" id="wizard-next-btn">Next Step</button>
+            </div>
+
+          </div>
+
+          <!-- Wizard Completed Result Card -->
+          <div class="glass-panel" id="calculator-card-results" style="display: none;">
+            <div class="section-header">
+              <h2 class="section-title">🎉 Questionnaire Complete!</h2>
+              <button class="btn btn-secondary btn-sm" id="results-recalculate-btn">Recalculate</button>
+            </div>
+            
+            <div class="results-container">
+              
+              <!-- Metrics list breakdown -->
+              <div>
+                <div class="results-metrics-grid">
+                  <div class="result-metric-card">
+                    <div class="result-metric-title">Monthly Footprint</div>
+                    <div class="result-metric-value" id="results-monthly-co2">-- kg</div>
+                  </div>
+                  <div class="result-metric-card">
+                    <div class="result-metric-title">Yearly Projection</div>
+                    <div class="result-metric-value" id="results-yearly-co2">-- kg</div>
+                  </div>
+                  <div class="result-metric-card">
+                    <div class="result-metric-title">Sustainability Index</div>
+                    <div class="result-metric-value" id="results-score-index">-- /100</div>
+                  </div>
+                  <div class="result-metric-card">
+                    <div class="result-metric-title">Climate Grade</div>
+                    <div class="result-metric-value" id="results-grade">--</div>
+                  </div>
+                </div>
+
+                <div class="category-bar-list">
+                  <div class="category-bar-item">
+                    <div class="category-bar-label-row">
+                      <span>🚗 Transportation</span>
+                      <span id="results-share-transport">0%</span>
+                    </div>
+                    <div class="category-bar-outer">
+                      <div class="category-bar-inner transport" id="results-bar-transport"></div>
+                    </div>
+                  </div>
+
+                  <div class="category-bar-item">
+                    <div class="category-bar-label-row">
+                      <span>💡 Home Energy</span>
+                      <span id="results-share-energy">0%</span>
+                    </div>
+                    <div class="category-bar-outer">
+                      <div class="category-bar-inner energy" id="results-bar-energy"></div>
+                    </div>
+                  </div>
+
+                  <div class="category-bar-item">
+                    <div class="category-bar-label-row">
+                      <span>🥗 Food & Diet</span>
+                      <span id="results-share-food">0%</span>
+                    </div>
+                    <div class="category-bar-outer">
+                      <div class="category-bar-inner food" id="results-bar-food"></div>
+                    </div>
+                  </div>
+
+                  <div class="category-bar-item">
+                    <div class="category-bar-label-row">
+                      <span>🛍️ Shopping & Fast Fashion</span>
+                      <span id="results-share-shopping">0%</span>
+                    </div>
+                    <div class="category-bar-outer">
+                      <div class="category-bar-inner shopping" id="results-bar-shopping"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recommendation Card -->
+              <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--card-border); padding: 24px; border-radius: var(--border-radius-md);">
+                  <div class="score-grade-badge" id="results-title-badge">Planet Guardian</div>
+                  <h3 style="font-size: 20px; margin-bottom: 12px; font-weight: 700;">Climate Insight</h3>
+                  <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;" id="results-feedback-text">Excellent profile evaluation. We suggest navigating to the AI Coach tab to get interactive chat recommendations and your custom weekly checklist.</p>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                  <button class="btn btn-accent" style="flex: 1;" id="results-go-coach-btn">Consult AI Coach</button>
+                  <button class="btn btn-primary" style="flex: 1;" id="results-go-dashboard-btn">Go to Dashboard</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 4: AI CARBON COACH
+             ================================================= -->
+        <section id="coach-page" class="tab-content">
+          
+          <div class="coach-container">
+            
+            <!-- Chat Pane -->
+            <div class="glass-panel chat-panel">
+              <!-- Chat header status -->
+              <div class="chat-header">
+                <div class="coach-avatar">🤖</div>
+                <div>
+                  <div class="coach-status-name">EcoQuest AI Coach</div>
+                  <div class="coach-status-text">Active Counselor</div>
+                </div>
+              </div>
+
+              <!-- Messages stream -->
+              <div class="chat-messages-container" id="chat-messages-box">
+                <!-- Messages populated via JS -->
+              </div>
+
+              <!-- Chips suggestion container -->
+              <div class="chat-suggestions" id="chat-suggestions-container">
+                <!-- Dynamically updated -->
+              </div>
+
+              <!-- Input text form -->
+              <form class="chat-input-area" id="chat-input-form" onsubmit="return false;">
+                <input type="text" class="chat-input" id="chat-user-input-field" placeholder="Ask your coach (e.g. How to reduce AC usage?)...">
+                <button type="submit" class="btn btn-primary btn-sm" id="chat-send-btn" style="border-radius: 30px; padding: 0 20px;">Send</button>
+              </form>
+            </div>
+
+            <!-- Assigned Weekly Goals Sidebar panel -->
+            <div class="coach-sidebar-goals">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">📋 Assigned Weekly Goals</h3>
+                <p class="section-desc" style="margin-bottom: 20px;">Your Coach sets weekly checkpoints to help trim high emissions.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;" id="coach-goals-checklist">
+                  <!-- POPULATED VIA JS -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 5: CARBON TWIN SIMULATOR
+             ================================================= -->
+        <section id="twin-page" class="tab-content">
+          
+          <div class="twin-layout">
+            
+            <!-- Left panel: interactive sliders -->
+            <div class="glass-panel">
+              <h2 style="font-size: 24px; margin-bottom: 6px;">🧭 Test Carbon Reductions</h2>
+              <p class="section-desc" style="margin-bottom: 32px;">Drag the sliders to represent sustainable swaps in your lifestyle. See how it shapes your virtual twin's footprint.</p>
+              
+              <div class="twin-sliders-container">
+                
+                <!-- Slider 1: commuting -->
+                <div class="simulator-slider-group">
+                  <div class="slider-label-row">
+                    <span class="slider-name">🚴 Swap Car Trips with Cycling/Walking</span>
+                    <span class="slider-value-display" id="slider-val-commute">0 km/week</span>
+                  </div>
+                  <input type="range" class="simulator-slider-input" id="slider-input-commute" min="0" max="150" value="0">
+                </div>
+
+                <!-- Slider 2: AC reductions -->
+                <div class="simulator-slider-group">
+                  <div class="slider-label-row">
+                    <span class="slider-name">❄️ Reduce AC cooling</span>
+                    <span class="slider-value-display" id="slider-val-ac">0 hours/day</span>
+                  </div>
+                  <input type="range" class="simulator-slider-input" id="slider-input-ac" min="0" max="12" value="0">
+                </div>
+
+                <!-- Slider 3: LED bulbs swap -->
+                <div class="simulator-slider-group">
+                  <div class="slider-label-row">
+                    <span class="slider-name">💡 Switch to LED/Efficient lighting</span>
+                    <span class="slider-value-display" id="slider-val-bulbs">0% replaced</span>
+                  </div>
+                  <input type="range" class="simulator-slider-input" id="slider-input-bulbs" min="0" max="100" value="0" step="25">
+                </div>
+
+                <!-- Slider 4: vegetarian meals -->
+                <div class="simulator-slider-group">
+                  <div class="slider-label-row">
+                    <span class="slider-name">🥗 Swap Meat meals to Vegetarian</span>
+                    <span class="slider-value-display" id="slider-val-meat">0 meals/week</span>
+                  </div>
+                  <input type="range" class="simulator-slider-input" id="slider-input-meat" min="0" max="14" value="0">
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Right panel: visual projections -->
+            <div class="twin-projection-panel">
+              
+              <!-- Twin scorecard comparing side by side -->
+              <div class="glass-panel" style="margin-bottom: 24px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">🌍 Your Carbon Twin Status</h3>
+                <p class="section-desc">Observe the side-by-side comparison of annual emissions projection.</p>
+                
+                <div class="projection-comparison-grid">
+                  
+                  <div class="projection-graphic-box">
+                    <svg class="twin-graphic-svg-container" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(16, 185, 129, 0.1)" stroke-width="6"/>
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="6" stroke-dasharray="280" stroke-dashoffset="70" id="twin-gauge-offset"/>
+                      <text x="50" y="55" text-anchor="middle" fill="var(--text-primary)" font-size="14" font-weight="bold" font-family="var(--font-heading)" id="twin-score-index-txt">85</text>
+                    </svg>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--primary);" id="twin-grade-txt">A grade</div>
+                  </div>
+
+                  <div class="projection-counters">
+                    <div class="projection-counter-card">
+                      <div class="projection-counter-icon">☁️</div>
+                      <div class="projection-counter-details">
+                        <h4>Annual Footprint</h4>
+                        <div class="projection-counter-value" id="twin-yearly-co2-val">-- kg</div>
+                      </div>
+                    </div>
+
+                    <div class="projection-counter-card">
+                      <div class="projection-counter-icon">🌳</div>
+                      <div class="projection-counter-details">
+                        <h4>Trees Saved</h4>
+                        <div class="projection-counter-value" id="twin-trees-val">0.0</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Savings calculations cards -->
+              <div class="glass-panel" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+                
+                <div class="projection-counter-card" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);">
+                  <div class="projection-counter-icon" style="background: var(--primary-glow); color: var(--primary);">⚡</div>
+                  <div class="projection-counter-details">
+                    <h4>Total Projected Annual Carbon Savings</h4>
+                    <div class="projection-counter-value savings" id="twin-annual-savings-val">0 kg CO2</div>
+                  </div>
+                </div>
+
+                <div class="projection-counter-card" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);">
+                  <div class="projection-counter-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;">💵</div>
+                  <div class="projection-counter-details">
+                    <h4>Projected Financial Utility Savings</h4>
+                    <div class="projection-counter-value money" id="twin-financial-savings-val">$0.00 / year</div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 6: SUSTAINABILITY CLIMATE HUB
+             ================================================= -->
+        <section id="hub-page" class="tab-content">
+          
+          <div class="hub-layout">
+            
+            <!-- Left Side: Interactive Quiz & Accordion FAQs -->
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+              
+              <!-- Sustainability Quiz Card -->
+              <div class="glass-panel quiz-panel">
+                <div>
+                  <div class="section-header" style="margin-bottom: 8px;">
+                    <h3 class="section-title">💡 Sustainability Quiz</h3>
+                    <div class="checklist-badge xp-val" id="quiz-xp-reward">+25 XP</div>
+                  </div>
+                  <p class="section-desc" style="margin-bottom: 24px;">Test your ecology literacy to secure XP and build up your streak counter!</p>
+                  
+                  <div class="quiz-question-box" id="quiz-question-txt">
+                    Question loading...
+                  </div>
+                  
+                  <div class="quiz-options-container" id="quiz-options-box">
+                    <!-- Populated via JS -->
+                  </div>
+                </div>
+
+                <!-- Explanation container shows on submission -->
+                <div class="quiz-feedback-box" id="quiz-feedback-container">
+                  <div class="quiz-feedback-title" id="quiz-feedback-title-txt">Correct!</div>
+                  <div class="quiz-feedback-text" id="quiz-explanation-txt">Details loading...</div>
+                </div>
+                
+                <div style="margin-top: 24px; text-align: right;">
+                  <button class="btn btn-secondary btn-sm" id="quiz-next-question-btn" style="display: none;">Next Question</button>
+                </div>
+              </div>
+
+              <!-- Knowledge Center Accordions -->
+              <div class="glass-panel">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">📚 Eco Knowledge Center</h3>
+                <p class="section-desc" style="margin-bottom: 16px;">Expand your understanding of key ecological terms.</p>
+                
+                <div class="knowledge-list" id="knowledge-faq-list">
+                  <!-- Generated via JS -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Side: Monthly Climate Scorecard & Challenges & Habits -->
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+              
+              <!-- Habit Tracker checklist widget -->
+              <div class="glass-panel">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">💪 Daily Eco Habit Tracker</h3>
+                <p class="section-desc" style="margin-bottom: 20px;">Build healthy long-term routines by tracking habits daily.</p>
+                
+                <div class="habit-tracker-list">
+                  <div class="habit-item">
+                    <div class="habit-checkbox" data-habit-id="h-bottle">
+                      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="habit-details">
+                      <div class="habit-name">Carried a Reusable Bottle</div>
+                      <div class="habit-frequency">Daily goal • +5 XP</div>
+                    </div>
+                  </div>
+
+                  <div class="habit-item">
+                    <div class="habit-checkbox" data-habit-id="h-lights">
+                      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="habit-details">
+                      <div class="habit-name">Unplugged Standby Electronics</div>
+                      <div class="habit-frequency">Daily goal • +5 XP</div>
+                    </div>
+                  </div>
+
+                  <div class="habit-item">
+                    <div class="habit-checkbox" data-habit-id="h-waste">
+                      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="habit-details">
+                      <div class="habit-name">Composted Food Residuals</div>
+                      <div class="habit-frequency">Daily goal • +5 XP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Carbon Reduction Multi-Day Challenges deck -->
+              <div class="glass-panel">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">📅 Active Climate Challenges</h3>
+                <p class="section-desc" style="margin-bottom: 16px;">Enroll in long-term challenges to boost your rank score.</p>
+                
+                <div class="challenges-deck" id="challenges-container-deck">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 7: LEADERBOARD & ACHIEVEMENTS
+             ================================================= -->
+        <section id="leaderboard-page" class="tab-content">
+          
+          <div class="leaderboard-achieve-layout">
+            
+            <!-- Community Rank Leaderboard lists -->
+            <div class="glass-panel">
+              <h2 style="font-size: 24px; margin-bottom: 6px;">🏆 Weekly Leaderboard</h2>
+              <p class="section-desc" style="margin-bottom: 24px;">Compete with the local Eco-Warriors. Earn XP to climb rankings.</p>
+              
+              <div class="leaderboard-list" id="leaderboard-rankings-box">
+                <!-- Generated via JS -->
+              </div>
+            </div>
+
+            <!-- Achievement badges gallery grid -->
+            <div class="glass-panel">
+              <h2 style="font-size: 24px; margin-bottom: 6px;">🎖️ Achievement Badges</h2>
+              <p class="section-desc" style="margin-bottom: 24px;">Unlock special badges as you take action and improve your rating.</p>
+              
+              <div class="badges-grid" id="achievement-badges-box">
+                <!-- Generated via JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             PAGE 8: WEEKLY AI REPORT LAYOUT
+             ================================================= -->
+        <section id="report-page" class="tab-content">
+          
+          <div class="report-frame" id="printable-report-card">
+            <!-- Banner -->
+            <div class="report-header-banner">
+              <div class="report-title-block">
+                <h2 id="report-user-header">Weekly Climate Report</h2>
+                <p id="report-date-str">Generated on June 19, 2026</p>
+              </div>
+              <div class="report-badge-container" id="report-status-badge">🌱</div>
+            </div>
+
+            <!-- Report Details -->
+            <div class="report-body">
+              
+              <div class="report-summary-boxes">
+                <div class="report-summary-box">
+                  <div class="report-summary-num" id="report-score-num">--</div>
+                  <div class="report-summary-label">Carbon Score</div>
+                </div>
+                <div class="report-summary-box">
+                  <div class="report-summary-num" id="report-co2-num">0.0 kg</div>
+                  <div class="report-summary-label">CO2 Saved</div>
+                </div>
+                <div class="report-summary-box">
+                  <div class="report-summary-num" id="report-streak-num">0d</div>
+                  <div class="report-summary-label">Eco Streak</div>
+                </div>
+              </div>
+
+              <!-- AI Analysis Section -->
+              <div class="report-section">
+                <h3>🔍 AI Lifestyle Evaluation</h3>
+                <p id="report-lifestyle-analysis">Please complete the Carbon Score Calculator form first. Once your details are analyzed, the AI Coach will generate your weekly lifestyle assessment and target reduction checklist here.</p>
+              </div>
+
+              <!-- Recommendation Checklist -->
+              <div class="report-section">
+                <h3>📝 Tailored Action Checklist</h3>
+                <div class="report-checklist" id="report-action-checklist">
+                  <div class="report-checklist-item">
+                    <span class="report-bullet">•</span>
+                    <span>No suggestions available. Complete the calculator form to populate recommendations.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Projections disclaimer -->
+              <div class="report-section" style="margin-bottom: 0; text-align: center; border-top: 1px solid var(--card-border); padding-top: 24px; opacity: 0.6; font-size: 11px;">
+                EcoQuest AI utilizes standard EPA carbon emission indices. Action suggestions are rule-based advice indicators.
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bottom trigger print button -->
+          <div style="text-align: center; margin-bottom: 40px;">
+            <button class="btn btn-primary" id="print-report-btn">🖨️ Download / Print Report</button>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation bar -->
+    <div class="mobile-bottom-nav">
+      <a class="nav-link active" data-target="landing-page">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Home</span>
+      </a>
+      <a class="nav-link" data-target="dashboard-page">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/></svg>
+        <span>Dash</span>
+      </a>
+      <a class="nav-link" data-target="calculator-page">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+        <span>Calc</span>
+      </a>
+      <a class="nav-link" data-target="coach-page">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Coach</span>
+      </a>
+      <a class="nav-link" data-target="hub-page">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+        <span>Hub</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- =================================================
+       MODAL 1: WELCOME & AUTH MODAL
+       ================================================= -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-content-box">
+      <button class="modal-close-btn" id="auth-close-btn">&times;</button>
+      <div class="auth-header">
+        <h2>Enter EcoQuest</h2>
+        <p>Set up your profile to start earning XP, completing challenges, and climbing rankings.</p>
+      </div>
+      <form class="auth-form" id="auth-form-submit" onsubmit="return false;">
+        <div class="auth-form-group">
+          <label for="auth-input-username">Eco-Username</label>
+          <input type="text" id="auth-input-username" required placeholder="e.g. EcoNinja2026" maxlength="15">
+        </div>
+        <div class="auth-form-group">
+          <label>Choose Avatar Icon</label>
+          <div class="visual-select-grid" style="grid-template-columns: repeat(4, 1fr);" id="avatar-grid-selector">
+            <div class="visual-select-card selected" data-avatar="🛡️">
+              <div style="font-size: 28px;">🛡️</div>
+            </div>
+            <div class="visual-select-card" data-avatar="🌱">
+              <div style="font-size: 28px;">🌱</div>
+            </div>
+            <div class="visual-select-card" data-avatar="🦊">
+              <div style="font-size: 28px;">🦊</div>
+            </div>
+            <div class="visual-select-card" data-avatar="⚡">
+              <div style="font-size: 28px;">⚡</div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Popups Notifications container -->
+  <div class="toast-container" id="toast-alerts-box" aria-live="polite"></div>
+
+  <!-- App Core JS controller -->
+  <script type="module" src="js/data.js"></script>
+  <script type="module" src="js/calculator.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
