@@ -1,5 +1,8 @@
-// EcoQuest AI - Carbon Footprint Calculator Engine
-// Provides conversion factors and calculation logic for user input variables
+/**
+ * EcoQuest AI - Carbon Footprint Calculator Engine
+ * Provides conversion factors and calculation logic for user input variables
+ * @module EcoQuestCalculator
+ */
 
 window.EcoQuestCalculator = {
   // Constants for CO2 emissions factors (in kg CO2 equivalents)
@@ -50,10 +53,36 @@ window.EcoQuestCalculator = {
 
   /**
    * Calculates monthly and yearly CO2 emissions based on user parameters
-   * @param {Object} inputs 
-   * @returns {Object} Calculated emission report
+   * @param {Object} inputs User input values
+   * @param {number} inputs.carUsage Weekly car usage in kilometers
+   * @param {string} inputs.carType Type of car (petrol, diesel, hybrid, electric)
+   * @param {number} inputs.publicTransport Weekly public transport in kilometers
+   * @param {number} inputs.bikeUsage Weekly bike usage in kilometers
+   * @param {number} inputs.acUsage Daily AC usage in hours
+   * @param {number} inputs.electricityUsage Monthly electricity in kWh
+   * @param {string} inputs.applianceEfficiency Efficiency level (high, medium, low)
+   * @param {number} inputs.vegetarianMeals Weekly vegetarian meals
+   * @param {number} inputs.nonVegetarianMeals Weekly non-vegetarian meals
+   * @param {string} inputs.packagedFood Packaged food consumption level
+   * @param {number} inputs.monthlyPurchases Monthly new product purchases
+   * @param {string} inputs.fastFashion Fast fashion frequency level
+   * @returns {Object} Calculated emission report with scores and grades
+   * @throws {Error} If inputs are invalid
    */
   calculate: function(inputs) {
+    // Validate inputs
+    if (!inputs || typeof inputs !== 'object') {
+      throw new Error('Invalid inputs: must be an object');
+    }
+
+    // Sanitize and validate numeric inputs
+    const sanitizeNumber = (val, defaultVal = 0, min = 0, max = Infinity) => {
+      const num = parseFloat(val) || defaultVal;
+      if (num < min) return min;
+      if (num > max) return max;
+      return Math.max(0, num);
+    };
+
     // Defaults in case inputs are missing
     const i = Object.assign({
       carUsage: 0,
@@ -70,6 +99,46 @@ window.EcoQuestCalculator = {
       monthlyPurchases: 2,
       fastFashion: 'sometimes'
     }, inputs);
+
+    // Validate numeric inputs
+    i.carUsage = sanitizeNumber(i.carUsage, 0, 0, 1000);
+    i.publicTransport = sanitizeNumber(i.publicTransport, 0, 0, 1000);
+    i.bikeUsage = sanitizeNumber(i.bikeUsage, 0, 0, 1000);
+    i.acUsage = sanitizeNumber(i.acUsage, 0, 0, 24);
+    i.electricityUsage = sanitizeNumber(i.electricityUsage, 0, 0, 10000);
+    i.vegetarianMeals = sanitizeNumber(i.vegetarianMeals, 14, 0, 21);
+    i.nonVegetarianMeals = sanitizeNumber(i.nonVegetarianMeals, 7, 0, 21);
+    i.monthlyPurchases = sanitizeNumber(i.monthlyPurchases, 2, 0, 100);
+
+    // Validate meal sum
+    if (i.vegetarianMeals + i.nonVegetarianMeals > 21) {
+      i.vegetarianMeals = 14;
+      i.nonVegetarianMeals = 7;
+    }
+
+    // Validate car type
+    const validCarTypes = ['petrol', 'diesel', 'hybrid', 'electric'];
+    if (!validCarTypes.includes(i.carType)) {
+      i.carType = 'petrol';
+    }
+
+    // Validate appliance efficiency
+    const validEfficiency = ['low', 'medium', 'high'];
+    if (!validEfficiency.includes(i.applianceEfficiency)) {
+      i.applianceEfficiency = 'medium';
+    }
+
+    // Validate packaged food level
+    const validPackagedFood = ['low', 'medium', 'high'];
+    if (!validPackagedFood.includes(i.packagedFood)) {
+      i.packagedFood = 'medium';
+    }
+
+    // Validate fast fashion level
+    const validFastFashion = ['never', 'sometimes', 'frequently'];
+    if (!validFastFashion.includes(i.fastFashion)) {
+      i.fastFashion = 'sometimes';
+    }
 
     // 1. Transportation Calculations (Weekly -> Monthly factor = 4.33 weeks per month)
     const weeksPerMonth = 4.33;
@@ -189,5 +258,66 @@ window.EcoQuestCalculator = {
         shopping: monthlyTotal > 0 ? Math.round((shoppingEmissions / monthlyTotal) * 100) : 25
       }
     };
+  },
+
+  /**
+   * Calculate sustainability score from yearly CO2 emissions
+   * @param {number} yearlyTotal Yearly CO2 emissions in kg
+   * @returns {number} Score from 0-100
+   */
+  calculateScore: function(yearlyTotal) {
+    if (yearlyTotal <= 2000) return 100;
+    if (yearlyTotal >= 18000) return 5;
+    return 100 - Math.round(((yearlyTotal - 2000) / 16000) * 95);
+  },
+
+  /**
+   * Calculate grade and title from score
+   * @param {number} score Sustainability score (0-100)
+   * @returns {Object} Object with grade, title, and feedback
+   */
+  getGradeInfo: function(score) {
+    if (score >= 90) {
+      return {
+        grade: 'A+',
+        title: 'Planet Guardian',
+        feedback: 'Outstanding! Your footprint is well within the sustainable threshold for global temperatures. You are leading the charge for a cleaner planet!'
+      };
+    } else if (score >= 80) {
+      return {
+        grade: 'A',
+        title: 'Green Hero',
+        feedback: 'Excellent job! You are living very consciously. With just a few minor tweaks, you can become a gold-standard Planet Guardian.'
+      };
+    } else if (score >= 70) {
+      return {
+        grade: 'B',
+        title: 'Eco Explorer',
+        feedback: 'Good work! You are making active efforts to stay green. Try to reduce single-occupancy driving and increase plant-based meals to boost your score.'
+      };
+    } else if (score >= 50) {
+      return {
+        grade: 'C',
+        title: 'Habit Changer',
+        feedback: 'Moderate footprint. Your habits show some effort, but high electricity consumption or travel habits are weighing down your score. Try our Carbon Twin tool to simulate easy reductions!'
+      };
+    } else if (score >= 30) {
+      return {
+        grade: 'D',
+        title: 'Carbon Heavyweight',
+        feedback: 'High footprint. Your lifestyle exceeds sustainable limits significantly. Swapping fast fashion purchases and cycling short distances can make a massive impact.'
+      };
+    } else {
+      return {
+        grade: 'F',
+        title: 'Climate Sinner',
+        feedback: 'Critical footprint! Your emissions are extremely high, representing severe planetary strain. Unplug standby items, reduce electricity draw, and try meat-free days immediately.'
+      };
+    }
   }
 };
+
+// Export for testing in Node.js environment if module.exports is available
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = window.EcoQuestCalculator;
+}
